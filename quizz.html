@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz do Flamengo</title>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body{
+        background-image: url( fla.webp);
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 5px;
+    }
+    body h2{
+        margin-block:3s0px ;
+        color: rgb(250, 250, 250);
+    }
+    main{
+        background-color: white;
+        padding: 10px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 300px;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .content{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    .spnQtd{
+        text-align: end;
+    }
+    .items{
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    button{
+        width: 100%;
+        text-align: start;
+        padding: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: black;
+        color: wheat
+    }
+    .finish{
+        display: none;
+        flex-direction: column;
+        gap:10px;
+    }
+    .finish button{
+        border: none;
+        border-radius: 5px;
+        background-color: #008CCC;
+    }
+    .itemCerto {
+        background-color: green;
+    }
+
+    .itemErrado {
+        background-color: red;
+    }
+
+</style>
+</head>
+<body>
+    
+<h2>Quiz do Flamengo</h2>
+<main>
+    <div class="content">
+        <span class="spnQtd"></span>
+        <span class="questao"></span>
+        <span class="items"></span>
+    </div>
+    <div class="finish">
+        <span></span>
+        <button>Reiniciar</button>
+    </div>
+</main>
+<source>
+<script>
+const questoes = [{
+        questao: "Quando o Flamengo foi fundado?",
+        items: [
+            {option:"15 de Novembro de 1895", correct:true},
+            {option:"25 de Abril de 1893 ", correct:false},
+            {option:"24 de Fevereiro de 1985", correct:false},
+            {option:"10 de maio de 1854", correct:false}
+        ]
+    },
+    {
+        questao: "Quantos campeonatos brasileiros o Flamengo tem?",
+        items: [
+            {option:"8", correct:true},
+            {option:"10", correct:false},
+            {option:"5", correct:false},
+            {option:"7", correct:false}
+        ]
+    },
+   {
+    questao: "Qual foi o maior idolo do flamengo?",
+    items: [
+        {option:"Zico", correct:true},
+        {option:"Pele", correct:false},
+        {option:"Gabigol", correct:false},
+        {option:"Diego Alves", correct:false}
+    ]
+},
+{
+    questao: "Quantas libertadores tem o Flamengo?",
+    items: [
+        {option:"3", correct:true},
+        {option:"0", correct:false},
+        {option:"2", correct:false},
+        {option:"5", correct:false}
+    ]
+},
+{
+    questao: "Quantas copa do Brasil tem o Flamengo ?",
+    items: [
+        {option:"4", correct:true},
+        {option:"8", correct:false},
+        {option:"3", correct:false},
+        {option:"6", correct:false}
+    ]
+},
+{
+    questao: "Quantos gols no total tem o flamengo?",
+    items: [
+        {option:"13.000", correct:true},
+        {option:"12.968", correct:false},
+        {option:"14.050", correct:false},
+        {option:"10.524", correct:false}
+    ]
+},
+{
+questao: "Qual é o maior rival do Flamengo?",
+    items: [
+        {option:"Vasco da Gama", correct:true},
+        {option:"Fluminense", correct:false},
+        {option:"Botafogo", correct:false},
+        {option:"Palmeiras", correct:false}
+    ]
+},
+{
+questao: "Contra qual time o flamengo conquistou o mundial de clubles?",
+    items: [
+        {option:"Liverpool", correct:true},
+        {option:"Barcelona", correct:false},
+        {option:"Vasco da Gama", correct:false},
+        {option:"Real Madrid", correct:false}
+    ]
+},
+{
+questao: "Qual ano o Flamengo conquistou sua segunda libertadores?",
+    items: [
+        {option:"2019", correct:true},
+        {option:"2023", correct:false},
+        {option:"2017", correct:false},
+        {option:"2020", correct:false}
+    ]
+},
+{
+questao: "Qual foi o ano que o Flamengo conquistou o mundial de clubes?",
+    items: [
+        {option:"1981", correct:true},
+        {option:"1900", correct:false},
+        {option:"2019", correct:false},
+        {option:"1995", correct:false}
+    ]
+}
+];
+
+var somCerto = new Audio('som.certo.mp3');
+var somErrado = new Audio('som.erro.mp3');
+
+
+const questao = document.querySelector(".questao");
+const items = document.querySelector(".items");
+const spnQdt = document.querySelector(".spnQtd");
+const textFinish = document.querySelector(".finish span");
+const content = document.querySelector(".content");
+const contentFinish = document.querySelector(".finish");
+const btnrestart = document.querySelector(".finish button");
+
+let currentIndex = 0;
+let questoesCertas = 0;
+
+btnrestart.onclick = () => {
+    content.style.display = 'flex';
+    contentFinish.style.display = "none";
+
+    currentIndex = 0;
+    questoesCertas = 0;
+    embaralhar();
+    loadQuestion();
+}
+
+function embaralhamento(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function embaralhar() {
+    embaralhamento(questoes);
+
+   
+    questoes.forEach(question => {
+        embaralhamento(question.items);
+    });
+}
+
+function nextQuestion(e) {
+    const selectedButton = e.target;
+    const isCorrect = selectedButton.getAttribute("data-correct") === "true";
+
+    if (isCorrect) {
+        selectedButton.classList.add("itemCerto");
+        questoesCertas++;
+        somCerto.play()
+    } else {
+        selectedButton.classList.add("itemErrado");
+        somErrado.play()
+    }
+
+    if (currentIndex < questoes.length - 1) {
+        currentIndex++;
+        setTimeout(loadQuestion, 1500);
+        
+    } else {
+        setTimeout(finish,1500);
+    }
+}
+
+function finish(){
+    textFinish.innerHTML = `Você acertou ${questoesCertas} de ${questoes.length}`;
+    content.style.display = 'none';
+    contentFinish.style.display = "flex";
+}
+
+function loadQuestion() {
+    spnQdt.innerHTML = `${currentIndex+1}/${questoes.length}`;
+    const item = questoes[currentIndex];
+    items.innerHTML = "";
+    questao.innerHTML = item.questao;
+    item.items.forEach((answer)=> { 
+        const div = document.createElement("div");
+        div.innerHTML = `<button class="answer" data-correct="${answer.correct}">${answer.option}</button>`;
+        items.appendChild(div);
+    });
+    document.querySelectorAll(".answer").forEach((item) =>{item.addEventListener("click", nextQuestion )})
+}
+
+embaralhar();
+loadQuestion();
+</script>
+</body>
+</html>	
